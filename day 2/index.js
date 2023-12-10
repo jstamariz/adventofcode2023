@@ -49,9 +49,7 @@ function parseGame(record) {
 	const lines = fs.readFileSync("./input.txt", "utf-8").split("\n");
 	lines.forEach((line) => {
 		const game = parseGame(line);
-		console.log(game.Id);
 		const isPlayable = game.subsets.every((subset) => {
-			console.log(subset);
 			return subset.amount <= possibleGames[subset.color];
 		});
 
