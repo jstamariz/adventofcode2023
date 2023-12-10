@@ -1,15 +1,17 @@
-const fs = require("fs");
-const possibleGames = {
-	red: 12,
-	green: 13,
-	blue: 14,
-};
-
 /**
  * @typedef {Object} Subset
  * @property {string} color
  * @property {number} amount
  */
+
+const fs = require("fs");
+const colorRegex = /(red)|(green)|(blue)/;
+
+const possibleGames = {
+	red: 12,
+	green: 13,
+	blue: 14,
+};
 
 /**
  * @param {string} record
@@ -23,15 +25,11 @@ function getGameId(record) {
  * @returns {Subset[]}
  */
 function parseSubsets(record) {
-	return Object.keys(possibleGames).map((color) => {
-		const amountsRegex = new RegExp(`(\\d+) ${color}`, "g");
-		return {
-			color,
-			amount: Array.from(record.matchAll(amountsRegex), (match) =>
-				parseInt(match[1])
-			).reduce((acc, current) => acc + current, 0),
-		};
-	});
+	const showedCubes = record.replaceAll(";", ",").split(",");
+	return showedCubes.map((cube) => ({
+		color: cube.match(colorRegex)[0],
+		amount: parseInt(cube.match(/\d+/)[0]),
+	}));
 }
 
 /**
@@ -51,8 +49,9 @@ function parseGame(record) {
 	const lines = fs.readFileSync("./input.txt", "utf-8").split("\n");
 	lines.forEach((line) => {
 		const game = parseGame(line);
-		console.log(game);
+		console.log(game.Id);
 		const isPlayable = game.subsets.every((subset) => {
+			console.log(subset);
 			return subset.amount <= possibleGames[subset.color];
 		});
 
